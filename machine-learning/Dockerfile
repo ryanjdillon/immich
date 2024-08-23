@@ -96,6 +96,7 @@ COPY --from=builder /opt/venv /opt/venv
 COPY ann/ann.py /usr/src/ann/ann.py
 COPY start.sh log_conf.json ./
 COPY app .
+EXPOSE 3000/udp 3003/udp
 ENTRYPOINT ["tini", "--"]
 CMD ["./start.sh"]
 

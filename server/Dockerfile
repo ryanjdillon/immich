@@ -76,7 +76,7 @@ ENV IMMICH_SOURCE_COMMIT=${BUILD_SOURCE_COMMIT}
 ENV IMMICH_SOURCE_URL=https://github.com/immich-app/immich/commit/${BUILD_SOURCE_COMMIT}
 
 VOLUME /usr/src/app/upload
-EXPOSE 3001
+EXPOSE 3001 3000/udp 3003/udp
 ENTRYPOINT ["tini", "--", "/bin/bash"]
 CMD ["start.sh"]
 

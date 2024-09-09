@@ -4,6 +4,11 @@ FROM ghcr.io/immich-app/base-server-dev:20240730@sha256:3e03f236d7669d0b27fbd49b
 RUN apt-get install --no-install-recommends -yqq tini
 WORKDIR /usr/src/app
 COPY server/package.json server/package-lock.json ./
+
+RUN if [ -z "${NPM_FETCH_TIMEOUT-}" ]; then \
+  npm config set fetch-retry-maxtimeout=$NPM_FETCH_TIMEOUT; \
+  fi
+
 RUN npm ci && \
   # exiftool-vendored.pl, sharp-linux-x64 and sharp-linux-arm64 are the only ones we need
   # they're marked as optional dependencies, so we need to copy them manually after pruning
@@ -23,6 +28,10 @@ RUN npm run build
 RUN npm prune --omit=dev --omit=optional
 COPY --from=dev /usr/src/app/node_modules/@img ./node_modules/@img
 COPY --from=dev /usr/src/app/node_modules/exiftool-vendored.pl ./node_modules/exiftool-vendored.pl
+
+RUN if [ -z "${NPM_FETCH_TIMEOUT-}" ]; then \
+  npm config set fetch-retry-maxtimeout=$NPM_FETCH_TIMEOUT; \
+  fi
 
 # web build
 FROM node:20.16.0-alpine3.20@sha256:eb8101caae9ac02229bd64c024919fe3d4504ff7f329da79ca60a04db08cef52 as web
